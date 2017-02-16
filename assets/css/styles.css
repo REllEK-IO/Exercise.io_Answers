@@ -1,0 +1,98 @@
+body{
+	font-family: 'VT323', monospace;
+	/*background-image: url("../images/footer_lodyas.png");*/
+	background-image: url("../images/scanlines.jpg");
+	opacity: 0.8;
+    filter: saturate(10);
+    /*box-shadow: inset 0px -3px 294px rgba(255, 0, 0, 0.4);*/
+}
+
+footer{
+	position: fixed;
+	bottom: 0;
+}
+
+h1,h2,h3{
+	 text-shadow: 1px 1px #ff0000;
+}
+
+code{
+	display: block;
+	border-radius: 0;
+	background-color: #122512;
+	color: green;
+	width: 90%;
+	margin: 3%;
+	border-radius: 5px;
+	border-bottom: 1px solid rgba(255,0,0,.2);
+	border-right: 1px solid rgba(255,0,0,.2);
+}
+
+input{
+	margin: 0 0 0 5px;
+	display: inline-block;
+	border-radius: 5px;
+	background-color: #122512;
+	color: red;
+	border: black;
+	text-align: center;
+}
+
+input:focus {
+    outline: none !important;
+    border:1px solid red;
+}
+
+p{
+	display: inline-block;
+}
+
+.code-console{
+	color: white;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.dark-block{
+	background-color: #1f211f;
+    color: green;
+    border: 3px inset rgba(0, 255, 205, 0.3);
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 28px rgba(255,0,0,0.05);
+}
+
+.dark-bar{
+	background-color: #1f211f;
+    color: green;
+    border: 3px inset rgba(0, 255, 205, 0.3);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-shadow: inset 0px -3px 15px rgba(255,0,0,0.05);
+}
+
+.buffer-top{
+	margin-top: 1%;
+}
+.btn-success{
+	border-radius: 5px;
+    color: #263824;
+    font-weight: bolder;
+    border-bottom: 1px solid red;
+    border-right: 1px solid red;
+}
+
+.btn-success:hover{
+	border-bottom: 1px solid red;
+    border-right: 1px solid red;
+}
+
+.btn-sm{
+	margin: -3px 0 0 0;
+	box-shadow: none;
+}
