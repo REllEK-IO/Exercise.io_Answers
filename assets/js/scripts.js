@@ -108,34 +108,6 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 	}
 }
 
-let slowLoadElement = function(target, ele, content, speed){
-	$(target).append(ele);
-	let indx = 0;
-	let eggTimer = setInterval(function(){	
-		if(indx < content.length)
-		{
-			$(target).children().append(content[indx]);
-			indx++;
-		}
-		else
-		{
-			window.clearInterval(eggTimer);
-		}
-	},speed)
-}
-
-let delayElement = function(target, ele, speed, func){
-	let delayTimer = window.setTimeout(function(){
-		$(target).append(ele);
-		if (typeof func === "function") {
-			func();
-		}
-		else{
-			console.log("Failed");
-		}
-	},speed)
-}
-
 //Outputs user info into designated field
 let outputWorld = function(nm, target){
 	console.log("Called");
@@ -146,31 +118,6 @@ let outputWorld = function(nm, target){
 	else{
 		$(target).html("Hello Cruel World...");
 	}
-}
-
-//Controls Hello World logic + styling
-let helloWorld = function(){
-	let str = "Hello welcome to this page, might I ask, what is your name?";
-	let inp = "<input style='width: 10%; padding: 2px;' id='hello-input'></input>";
-	let bt = "<button class='btn btn-success btn-sm' id='hello-button'> _ </button>";
-
-
-	slowLoadElement("#hello-world-prompt", $("<p>"), str, 100);
-	delayElement("#hello-world-prompt", inp, (100 * str.length));
-	delayElement("#hello-world-prompt", bt, (100 * str.length) + 100, function(){
-		document.getElementById("hello-input").focus()
-		$("#hello-button").click(function(){
-			userName = $("#hello-input").val();
-			outputWorld($("#hello-input").val());
-		});
-		$('#hello-input').keypress(function (e) {
-  			if (e.which == 13) {
-  				userName = $("#hello-input").val();
-    			outputWorld($("#hello-input").val());
-    			return false;    //<---- Add this line
-  			}
-		});
-	});
 }
 
 let outputLeap = function(yr, target){
@@ -191,41 +138,10 @@ let outputLeap = function(yr, target){
 	}
 }
 
-let leapYear = function(slow){
-	let str = "Now lets work with leap years " + name + ". What year would you like to check?";
-	let inp = "<input style='width: 10%; padding: 2px;' id='leap-input'></input>";
-	let bt = "<button class='btn btn-success btn-sm' id='leap-button'> _ </button>";
-
-	if(slow){
-		slowLoadElement("#leap-year-prompt", $("<p>"), str, 100);
-		delayElement("#leap-year-prompt", inp, (100 * str.length));
-		delayElement("#leap-year-prompt", bt, (100 * str.length) + 100, function(){
-			document.getElementById("leap-input").focus()
-			$("#leap-button").click(function(){
-				outputLeap($("#leap-input").val());
-			});
-			$('#leap-input').keypress(function (e) {
-	  			if (e.which == 13) {
-	    			outputLeap($("#leap-input").val());
-	    			return false;    //<---- Add this line
-	  			}
-			});
-		});
-	}
-	else{
-		$("#leap-year-prompt").empty();
-	}
-}
-
 $(document).ready(function(){
-	$("#hello-world-button").one('click', function(){
-		helloWorld(true);
-	});
+	let worldCard = new CodeCard("hello-world", "Hello welcome to this page, might I ask, what is your name?", outputWorld);
+	worldCard.createCard();
 
-	$("#leap-year-button").one('click', function(){
-		leapYear(true);
-	});
-
-	let newCard = new CodeCard("hello-world", "Hello welcome to this page, might I ask, what is your name?", outputWorld);
-	newCard.createCard();
+	let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
+	leapCard.createCard();
 });
