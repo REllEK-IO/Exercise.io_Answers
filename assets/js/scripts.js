@@ -7,9 +7,22 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 	let self = this;
 	this.fileName = name;
 	this.prompt = promptMessage;
-	this.inputField = "<input contenteditable='true' style='width: 10%; padding: 2px;' id='" + this.fileName + "-input'></input>";
-	this.inputButton = "<button class='btn btn-success btn-sm' id='" + this.fileName + "-input-button'> _ </button>";
+	
+	this.inputField;
+	this.inputButton;
 
+	if(this.prompt instanceof Array){
+		this.inputField = [];
+		this.inputButton = [];
+		for (var i = 0; i < self.prompt.length; i++) {
+			this.inputField.push("<input contenteditable='true' style='width: 10%; padding: 2px;' id='" + this.fileName + i + "-input'></input>");
+			this.inputButton.push("<button class='btn btn-success btn-sm' id='" + this.fileName + i + "-input-button'> _ </button>");
+		}
+	}
+	else{
+		this.inputField = "<input contenteditable='true' style='width: 10%; padding: 2px;' id='" + this.fileName + "-input'></input>";
+		this.inputButton = "<button class='btn btn-success btn-sm' id='" + this.fileName + "-input-button'> _ </button>";
+	}
 	this.eggTimer;
 	this.delayTimer;
 
@@ -18,19 +31,22 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 	
 
 	//Slow loads in content on target
-	this.slowLoadElement = function(target, ele, content, speed){
+	this.slowLoadElement = function(target, ele, content, speed, func){
 		$(target).append(ele);
 		
 		let indx = 0;
 		let stepper = function(){
 			if(indx < content.length)
 			{
-				$(target).children().append(content[indx]);
+				$(target).children().eq(0).append(content[indx]);
 				indx++;
 			}
 			else
 			{
 				self.clearIntervalTimer();
+				if(typeof func === "function"){
+					func();
+				}
 			}
 		}
 
@@ -48,6 +64,11 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 				console.log("delay element did not receive a function");
 			}
 		},speed)
+	}
+
+	this.clearTimers = function(){
+		self.clearIntervalTimer();
+		self.clearTimoutTimer();
 	}
 
 	this.clearIntervalTimer = function(){
@@ -73,7 +94,6 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 		$("#" + self.fileName + "-content-div").append("<button class='btn btn-success' id='" + self.fileName + "-button'>Execute Code</button>")
 						.append("<code id='" + self.fileName +"'>Code appears here.</code>")
 						.append("<code class='code-console' id='" + self.fileName + "-output'>Console like</code>")
-						.append("<div id='" + self.fileName + "-prompt'></div>")
 		self.initButtons();
 		self.initButtonsControl();
 	}
@@ -85,6 +105,7 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			self.maximizeCard();
 		})
 		$("#" + self.fileName + "-content-div").empty();
+		self.clearTimers();
 	}
 
 	this.maximizeCard = function(){
@@ -112,8 +133,7 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			self.initPrompt(true);
 			$("#" + self.fileName + "-button").html("Force");
 			$("#" + self.fileName + "-button").one('click', function(){
-				self.clearIntervalTimer();
-				self.clearTimoutTimer();
+				self.clearTimers();
 				$("#" + self.fileName +"-prompt").empty();
 				self.initPrompt(false);
 			});
@@ -129,17 +149,20 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 		})
 	}
 
-	this.initPrompt = function(slow){
+	this.singleProp = function(slow)
+	{
+		$("#" + self.fileName + "-content-div").append("<div id='" + self.fileName + "-prompt'></div>");
 		if(slow)
 		{
 			let speed = 100;
-			self.slowLoadElement("#" + self.fileName +"-prompt", $("<p>"), self.prompt, speed);
 
 			let delayedFocus = function(){
 				document.getElementById(self.fileName + "-input").focus()
 				$("#" + self.fileName + "-input-button").on('click', function(){
 					self.exercismFunction($("#" + self.fileName + "-input").val(), "#" + self.fileName + "-output");
 				})
+				$("#" + self.fileName + "-button").off("click");
+				$("#" + self.fileName + "-button").html("Finished");
 			}
 
 			let delayedButton = function(){
@@ -151,7 +174,12 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			  			}
 					})
 			}
-			self.delayElement("#" + self.fileName + "-prompt", self.inputField, (speed * self.prompt.length), delayedButton)
+			let delayedInput = function(){
+				self.delayElement("#" + self.fileName + "-prompt", self.inputField, speed, delayedButton)
+			}
+
+			//BEGIN
+			self.slowLoadElement("#" + self.fileName +"-prompt", $("<p>"), self.prompt, speed, delayedInput);
 		}
 		else{
 			$("#" + self.fileName +"-prompt").append("<p>" + self.prompt + "</p>");
@@ -167,6 +195,92 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			$("#" + self.fileName + "-input-button").on('click', function(){
 					self.exercismFunction($("#" + self.fileName + "-input").val(), "#" + self.fileName + "-output");
 			})
+			$("#" + self.fileName + "-button").off("click");
+			$("#" + self.fileName + "-button").html("Finished");
+		}
+	}
+	this.multiplePrompt = function(slow, indx)
+	{
+		$("#" + self.fileName + "-prompt").append("<div id='" + self.fileName + indx + "-prompt'></div>");
+		let speed = 100;
+		if(slow){
+			let delayedFocus = function(){
+				document.getElementById(self.fileName + 0 + "-input").focus()
+				$("#" + self.fileName + indx + "-input-button").on('click', function(){
+					self.exercismFunction(self.multipleProp(), "#" + self.fileName + "-output");
+				})
+
+				//Recursion
+				indx++;
+				if(indx < self.prompt.length){
+					self.multiplePrompt(slow, indx);
+				}
+				else{
+					$("#" + self.fileName + "-button").off("click");
+					$("#" + self.fileName + "-button").html("Finished");
+				}
+			}
+
+			let delayedButton = function(){
+				self.delayElement("#" + self.fileName + indx + "-prompt", self.inputButton[indx], speed, delayedFocus)
+					$("#" + self.fileName + indx + "-input").keypress(function (e) {
+			  			if (e.which == 13) {
+			  				self.exercismFunction(self.multipleProp(), "#" + self.fileName + "-output");
+			    			return false;
+			  			}
+					})
+			}
+			
+			let delayedInput = function(){
+				self.delayElement("#" + self.fileName + indx + "-prompt", self.inputField[indx], speed, delayedButton)
+			}
+
+			//Begin
+			self.slowLoadElement("#" + self.fileName + indx +"-prompt", $("<p>"), self.prompt[indx], speed, delayedInput);
+		}
+		else{
+			$("#" + self.fileName + indx +"-prompt").append("<p>" + self.prompt + "</p>");
+			$("#" + self.fileName + indx +"-prompt").append(self.inputField[indx]);
+			$("#" + self.fileName + indx +"-prompt").append(self.inputButton[indx]);
+			document.getElementById(self.fileName + indx + "-input").focus();
+			$("#" + self.fileName + indx + "-input").keypress(function (e) {
+	  			if (e.which == 13) {
+	  				self.exercismFunction(self.multipleProp(), "#" + self.fileName + "-output");
+	    			return false;
+	  			}
+			})
+			$("#" + self.fileName + indx + "-input-button").on('click', function(){
+					self.exercismFunction(self.multipleProp(), "#" + self.fileName + "-output");
+			})
+
+			//Recursion
+			indx++;
+			if(indx < self.prompt.length){
+					self.multiplePrompt(slow, indx);
+			}
+			else{
+				$("#" + self.fileName + "-button").off("click");
+				$("#" + self.fileName + "-button").html("Finished");
+			}
+		}
+	}
+
+	//Takes all input fields in current prompt and returns them as an array
+	this.multipleProp = function(){
+		var arr = [];
+		for (var i = 0; i < self.prompt.length; i++) {
+			arr.push($("#" + self.fileName + i + "-input").val());
+		}
+		return arr;
+	}
+
+	this.initPrompt = function(slow){
+		if(self.prompt instanceof Array){
+			$("#" + self.fileName + "-content-div").append("<div id='" + self.fileName + "-prompt'></div>")
+			self.multiplePrompt(slow, 0);
+		}
+		else{
+			self.singleProp(slow);
 		}
 	}
 }
@@ -235,8 +349,13 @@ let outputLeap = function(yr, target){
 	}
 }
 
-let outputHammering = function(str, target){
-
+let outputHammering = function(arr, target){
+	let count = 0;
+	for (var i = 0; i < arr.length; i++) {
+		count += Number(arr[i]);
+	}
+	$(target).html(count);
+	console.log(count);
 }
 
 let aboutLink = function(){
@@ -255,8 +374,7 @@ let exerciseLink = function(){
 		let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
 		leapCard.createCard();
 	
-		let hammeringCard = new CodeCard("hammering", "Let's try something a little more tricky. DNA sequencing!..." + 
-			" Ok all we are really going is comparing two strings a spitting out the differce. For the hell of it type out a string.",
+		let hammeringCard = new CodeCard("hammering", ["Test1asfsgkjdsfbakjdngfaknjgffdngdkjfnglkfdnglkfd","Test2dsgkjnfdangjfdnvfdnknfvkfdnlkjnvfdjnvjfd"],
 			outputHammering);
 		hammeringCard.createCard();
 	}

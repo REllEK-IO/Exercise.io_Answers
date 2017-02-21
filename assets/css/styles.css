@@ -1,3 +1,6 @@
+html {
+  height: 100%;
+}
 body{
 	font-family: 'VT323', monospace;
 	/*background-image: url("../images/footer_lodyas.png");*/
@@ -8,7 +11,7 @@ body{
 }
 
 footer{
-	position: fixed;
+	position: relative;
 	bottom: 0;
 }
 
@@ -72,7 +75,7 @@ p{
 }
 
 .code-console{
-	color: white;
+	color: red;
 }
 
 .col-centered{
@@ -83,7 +86,7 @@ p{
 .dark-block{
 	background-color: #1f211f;
     color: green;
-    border: 3px inset rgba(0, 255, 205, 0.3);
+    border: 2px inset rgba(0, 255, 205, 0.3);
     border-radius: 5px;
     box-shadow: inset 0px 0px 28px rgba(255,0,0,0.05);
 }
@@ -91,7 +94,7 @@ p{
 .dark-bar{
 	background-color: #1f211f;
     color: green;
-    border: 3px inset rgba(0, 255, 205, 0.3);
+    border: 2px inset rgba(0, 255, 205, 0.3);
     border-top: none;
     border-left: none;
     border-right: none;
