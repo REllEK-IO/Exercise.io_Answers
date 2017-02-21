@@ -94,6 +94,9 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 						.append("<code class='code-console' id='" + self.fileName + "-output'>Console like</code>")
 						.append("<div id='" + self.fileName + "-prompt'></div>")
 		self.initButtons();
+		$("#" + self.fileName + "-minmax-control").one('click', function(){
+			self.minimizeCard();
+		})
 	}
 
 	this.exitCard = function(){
