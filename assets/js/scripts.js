@@ -1,6 +1,7 @@
 //ele takes JQEURY object, appends it to target, then fills element with content. Then takes call back that acts on target
 let userName = 'Dave';
 let elementCount = 0;
+let exercisesVisible = false;
 
 let CodeCard = function(name, promptMessage, exercismFunc){
 	let self = this;
@@ -168,12 +169,19 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 }
 
 let appendDefaultPage = function(){
+	let exercismLink = $("<a>").attr("href", "https://www.exercism.io").html("Exercise.io");
+	let exerciseLinkExercises = $("<a>").attr("href", "http://www.exercism.io/languages/javascript/exercises").html("Exercise.io JavaScript Exercises");
+	let githubLink = $("<a>").attr("href", "https://www.github.com/mtKeller/Exercise.io_Answers").html("here");
+
 	$(".container").append("<div class='row buffer-top' id='default-row'></div>")
 		$("#default-row").append("<div class='col-md-8 col-centered dark-block' id='default-col'></div>")
 		$("#default-col").append("<div style='margin: 3%;' id='default-div'></div>")
 		$("#default-col").append("<div style='margin: 3%;' id='default-content-div'></div>")
 		$("#default-div").append("<h3 style='margin-bottom: 3%'>Exercism Answers About</h3>")
-		$("#default-content-div").append("<p class='about-p'>Welcome to Exercism.io Answers. This page is built with JQuery and bootstrap who’s purpose it to act as a wrapper site for Exercism.io JavaScript exercises. If you would like to work on these exercises on your own. Please visit <a href=’https://www.exercism.io’>Exercism.io</a>, or directly their <a href=’http://www.exercism.io/languages/javascript/exercises’>JavaScript Exercise Page</a>.</p><br><br><p class='about-p'>If you would like to critique or view how this page was constructed using JQuery, you can the view the Github repository for this site <a href=’https://www.github.com/mtKeller/Exercise.io_Answers’>here</a>.</p>")
+		$("#default-content-div").append("<p class='about-p'>Welcome to Exercism.io Answers. This page is built with JQuery and Bootstrap who’s purpose it to act as a wrapper site for Exercism.io JavaScript exercises. If you would like to work on these exercises on your own. Please visit <a>Exercism.io</a>, or directly their <a>JavaScript Exercise Page</a>.</p><br><br><p class='about-p'>If you would like to critique or view how this page was constructed using JQuery, you can the view the Github repository for this site <a>here</a>.</p>");
+		$("#default-content-div").children("p").eq(0).children().eq(0).attr("href", "http://exercism.io");
+		$("#default-content-div").children("p").eq(0).children().eq(1).attr("href", "http://exercism.io/languages/javascript/exercises");
+		$("#default-content-div").children("p").eq(1).children().attr("href", "https://www.github.com/mtKeller/Exercise.io_Answers");
 }
 
 let removeDefaultPage = function(){
@@ -182,6 +190,7 @@ let removeDefaultPage = function(){
 
 let defaultPage = function(){
 	if(elementCount === 0){
+		exercisesVisible = false;
 		appendDefaultPage();
 	}
 	else if(elementCount > 0){
@@ -227,16 +236,31 @@ let outputHammering = function(str, target){
 
 }
 
+let aboutLink = function(){
+	$(".container").empty();
+	exercisesVisible = false;
+	elementCount = 0;
+	appendDefaultPage();
+}
+
+let exerciseLink = function(){
+	if(exercisesVisible === false){
+		exercisesVisible = true;
+		let worldCard = new CodeCard("hello-world", "Hello welcome to this page, might I ask, what is your name?", outputWorld);
+		worldCard.createCard();
+	
+		let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
+		leapCard.createCard();
+	
+		let hammeringCard = new CodeCard("hammering", "Let's try something a little more tricky. DNA sequencing!..." + 
+			" Ok all we are really going is comparing two strings a spitting out the differce. For the hell of it type out a string.",
+			outputHammering);
+		hammeringCard.createCard();
+	}
+}
+
 $(document).ready(function(){
-	defaultPage();
-	let worldCard = new CodeCard("hello-world", "Hello welcome to this page, might I ask, what is your name?", outputWorld);
-	worldCard.createCard();
-
-	let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
-	leapCard.createCard();
-
-	let hammeringCard = new CodeCard("hammering", "Let's try something a little more tricky. DNA sequencing!..." + 
-		" Ok all we are really going is comparing two strings a spitting out the differce. For the hell of it type out a string.",
-		outputHammering);
-	hammeringCard.createCard();
+	$("#exercise-page").click(exerciseLink);
+	$("#about-page").click(aboutLink);
+	exerciseLink();
 });

@@ -19,13 +19,13 @@ h1,h2,h3{
 code{
 	display: block;
 	border-radius: 0;
-	background-color: #122512;
+	background-color: black;
 	color: green;
 	width: 90%;
 	margin: 3%;
 	border-radius: 5px;
-	border-bottom: 1px solid rgba(255,0,0,.2);
-	border-right: 1px solid rgba(255,0,0,.2);
+	border-bottom: 1px solid rgba(0,255,0,.2);
+	border-right: 1px solid rgba(0,255,0,.2);
 }
 
 input{
@@ -48,8 +48,26 @@ p{
 	display: inline-block;
 }
 
+.navbar{
+	flex-direction: row;
+}
+
 .about-p{
     text-indent: 50px;
+}
+
+.nav-bar-left{
+	float: left;
+}
+
+.nav-bar-right{
+	margin-right: 10px;
+	float: right;
+}
+
+.nav-bar-right:hover{
+	cursor: pointer;
+	color: #0275d8;
 }
 
 .code-console{
