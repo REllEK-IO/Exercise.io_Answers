@@ -1,20 +1,22 @@
 //ele takes JQEURY object, appends it to target, then fills element with content. Then takes call back that acts on target
 let userName = 'Dave';
+let elementCount = 0;
 
 let CodeCard = function(name, promptMessage, exercismFunc){
+	let self = this;
 	this.fileName = name;
 	this.prompt = promptMessage;
-	this.inputField = "<input style='width: 10%; padding: 2px;' id='" + this.fileName + "-input'></input>";
+	this.inputField = "<input contenteditable='true' style='width: 10%; padding: 2px;' id='" + this.fileName + "-input'></input>";
 	this.inputButton = "<button class='btn btn-success btn-sm' id='" + this.fileName + "-input-button'> _ </button>";
 
 	this.eggTimer;
 	this.delayTimer;
 
 	this.exercismFunction = exercismFunc;
+	this.storeContent;
+	
 
-	let self = this;
-
-	//Slow loads in cotent on target
+	//Slow loads in content on target
 	this.slowLoadElement = function(target, ele, content, speed){
 		$(target).append(ele);
 		
@@ -56,24 +58,71 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 	}
 
 	this.createCard = function(){
+		//Increasing Card count on page
+		elementCount++;
+		defaultPage();
 		//Creates and inserts card
 		$(".container").append("<div class='row buffer-top' id='" + self.fileName + "-row'></div>")
 		$("#" + self.fileName + "-row").append("<div class='col-md-8 col-centered dark-block' id='" + self.fileName + "-col'></div>")
 		$("#" + self.fileName + "-col").append("<div style='margin: 3%;' id='" + self.fileName + "-div'></div>")
+		$("#" + self.fileName + "-col").append("<div style='margin: 3%;' id='" + self.fileName + "-content-div'></div>")
+		$("#" + self.fileName + "-div").append("<span class='glyphicon glyphicon-plus btn-control' id='" + self.fileName +"-close-control'>X</span>")
+		$("#" + self.fileName + "-div").append("<span class='glyphicon glyphicon-minus btn-control' id='" + self.fileName +"-minmax-control'>-</span>")
 		$("#" + self.fileName + "-div").append("<h3 style='margin-bottom: 3%'>" + self.fileName + " Exercism</h3>")
-						.append("<button class='btn btn-success' id='" + self.fileName + "-button'>Execute Code</button>")
+		$("#" + self.fileName + "-content-div").append("<button class='btn btn-success' id='" + self.fileName + "-button'>Execute Code</button>")
+						.append("<code id='" + self.fileName +"'>Code appears here.</code>")
+						.append("<code class='code-console' id='" + self.fileName + "-output'>Console like</code>")
+						.append("<div id='" + self.fileName + "-prompt'></div>")
+		self.initButtons();
+		self.initButtonsControl();
+	}
+
+	this.minimizeCard = function(){
+		self.storeContent = $("#" + self.fileName + "-row");
+		$("#" + self.fileName + "-minmax-control").html("+");
+		$("#" + self.fileName + "-minmax-control").one('click', function(){
+			self.maximizeCard();
+		})
+		$("#" + self.fileName + "-content-div").empty();
+	}
+
+	this.maximizeCard = function(){
+		$("#" + self.fileName + "-minmax-control").html("-");
+		$("#" + self.fileName + "-content-div").append("<button class='btn btn-success' id='" + self.fileName + "-button'>Execute Code</button>")
 						.append("<code id='" + self.fileName +"'>Code appears here.</code>")
 						.append("<code class='code-console' id='" + self.fileName + "-output'>Console like</code>")
 						.append("<div id='" + self.fileName + "-prompt'></div>")
 		self.initButtons();
 	}
 
+	this.exitCard = function(){
+		elementCount--;
+		$("#" + self.fileName + "-row").remove();
+		defaultPage();
+	}
+
+
 	this.initButtons = function(){
 		console.log("initButtons");
 		$("#" + self.fileName + "-button").one('click', function(){
 			self.initPrompt(true);
-
+			$("#" + self.fileName + "-button").html("Force");
+			$("#" + self.fileName + "-button").one('click', function(){
+				self.clearIntervalTimer();
+				self.clearTimoutTimer();
+				$("#" + self.fileName +"-prompt").empty();
+				self.initPrompt(false);
+			});
 		});
+	}
+
+	this.initButtonsControl = function(){
+		$("#" + self.fileName + "-close-control").one('click', function(){
+			self.exitCard();
+		})
+		$("#" + self.fileName + "-minmax-control").one('click', function(){
+			self.minimizeCard();
+		})
 	}
 
 	this.initPrompt = function(slow){
@@ -101,14 +150,51 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			self.delayElement("#" + self.fileName + "-prompt", self.inputField, (speed * self.prompt.length), delayedButton)
 		}
 		else{
-			//Fast prompt
-			//Change button to skip
-			//Then change button to Done
+			$("#" + self.fileName +"-prompt").append("<p>" + self.prompt + "</p>");
+			$("#" + self.fileName +"-prompt").append(self.inputField);
+			$("#" + self.fileName +"-prompt").append(self.inputButton);
+			document.getElementById(self.fileName + "-input").focus();
+			$("#" + self.fileName + "-input").keypress(function (e) {
+	  			if (e.which == 13) {
+	  				self.exercismFunction($("#" + self.fileName + "-input").val(), "#" + self.fileName + "-output");
+	    			return false;
+	  			}
+			})
+			$("#" + self.fileName + "-input-button").on('click', function(){
+					self.exercismFunction($("#" + self.fileName + "-input").val(), "#" + self.fileName + "-output");
+			})
 		}
 	}
 }
 
-//Outputs user info into designated field
+let appendDefaultPage = function(){
+	$(".container").append("<div class='row buffer-top' id='default-row'></div>")
+		$("#default-row").append("<div class='col-md-8 col-centered dark-block' id='default-col'></div>")
+		$("#default-col").append("<div style='margin: 3%;' id='default-div'></div>")
+		$("#default-col").append("<div style='margin: 3%;' id='default-content-div'></div>")
+		$("#default-div").append("<h3 style='margin-bottom: 3%'>Exercism Answers About</h3>")
+		$("#default-content-div").append("<p class='about-p'>Welcome to Exercism.io Answers. This page is built with JQuery and bootstrap who’s purpose it to act as a wrapper site for Exercism.io JavaScript exercises. If you would like to work on these exercises on your own. Please visit <a href=’https://www.exercism.io’>Exercism.io</a>, or directly their <a href=’http://www.exercism.io/languages/javascript/exercises’>JavaScript Exercise Page</a>.</p><br><br><p class='about-p'>If you would like to critique or view how this page was constructed using JQuery, you can the view the Github repository for this site <a href=’https://www.github.com/mtKeller/Exercise.io_Answers’>here</a>.</p>")
+}
+
+let removeDefaultPage = function(){
+	$("#default-row").remove();
+}
+
+let defaultPage = function(){
+	if(elementCount === 0){
+		appendDefaultPage();
+	}
+	else if(elementCount > 0){
+		removeDefaultPage();
+	}
+	else if(elementCount < 0){
+		console.log("elementCount is less than zero");
+		elementCount = 0;
+		defaultPage();
+	}
+}
+
+
 let outputWorld = function(nm, target){
 	console.log("Called");
 	if(nm != ''){
@@ -122,7 +208,6 @@ let outputWorld = function(nm, target){
 
 let outputLeap = function(yr, target){
 	let year = Number(yr);
-	console.log(year / 400);
 	if(year % 400 === 0)
 	{
 		$(target).html(userName + " the year " + year + " is a leap year!");
@@ -138,10 +223,20 @@ let outputLeap = function(yr, target){
 	}
 }
 
+let outputHammering = function(str, target){
+
+}
+
 $(document).ready(function(){
+	defaultPage();
 	let worldCard = new CodeCard("hello-world", "Hello welcome to this page, might I ask, what is your name?", outputWorld);
 	worldCard.createCard();
 
 	let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
 	leapCard.createCard();
+
+	let hammeringCard = new CodeCard("hammering", "Let's try something a little more tricky. DNA sequencing!..." + 
+		" Ok all we are really going is comparing two strings a spitting out the differce. For the hell of it type out a string.",
+		outputHammering);
+	hammeringCard.createCard();
 });

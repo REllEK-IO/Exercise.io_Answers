@@ -44,8 +44,12 @@ input:focus {
 }
 
 p{
-	font-size: larger;
+	font-size: x-large;
 	display: inline-block;
+}
+
+.about-p{
+    text-indent: 50px;
 }
 
 .code-console{
@@ -91,9 +95,24 @@ p{
 .btn-success:hover{
 	border-bottom: 1px solid red;
     border-right: 1px solid red;
+    cursor: pointer;
 }
 
 .btn-sm{
 	margin: -3px 0 0 0;
 	box-shadow: none;
+}
+
+.btn-control{
+    padding: 0 10px 0 10px;
+    font-size: larger;
+    margin: 0 -21px 0 26px;
+    color: #263824;
+    background-color: green;
+    border-radius: 9px;
+    float: right;
+}
+
+.btn-control:hover{
+	cursor: pointer;
 }
