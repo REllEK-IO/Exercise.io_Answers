@@ -5,9 +5,12 @@ body{
 	font-family: 'VT323', monospace;
 	/*background-image: url("../images/footer_lodyas.png");*/
 	background-image: url("../images/scanlines.jpg");
-	opacity: 0.8;
     filter: saturate(10);
     /*box-shadow: inset 0px -3px 294px rgba(255, 0, 0, 0.4);*/
+}
+
+div, nav, footer{
+	opacity: 0.9;
 }
 
 footer{

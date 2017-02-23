@@ -242,7 +242,7 @@ let CodeCard = function(name, promptMessage, exercismFunc){
 			$("#" + self.fileName + indx +"-prompt").append("<p>" + self.prompt + "</p>");
 			$("#" + self.fileName + indx +"-prompt").append(self.inputField[indx]);
 			$("#" + self.fileName + indx +"-prompt").append(self.inputButton[indx]);
-			document.getElementById(self.fileName + indx + "-input").focus();
+			document.getElementById(self.fileName + 0 + "-input").focus();
 			$("#" + self.fileName + indx + "-input").keypress(function (e) {
 	  			if (e.which == 13) {
 	  				self.exercismFunction(self.multipleProp(), "#" + self.fileName + "-output");
@@ -320,7 +320,6 @@ let defaultPage = function(){
 	}
 }
 
-
 let outputWorld = function(nm, target){
 	console.log("Called");
 	if(nm != ''){
@@ -374,7 +373,7 @@ let exerciseLink = function(){
 		let leapCard = new CodeCard("leap-year", "Ever wonder if a year is a leap year? Go on try one.", outputLeap);
 		leapCard.createCard();
 	
-		let hammeringCard = new CodeCard("hammering", ["Test1asfsgkjdsfbakjdngfaknjgffdngdkjfnglkfdnglkfd","Test2dsgkjnfdangjfdnvfdnknfvkfdnlkjnvfdjnvjfd"],
+		let hammeringCard = new CodeCard("hammering", ["Test1asfsg kjdsfbakjd ngfaknj gffdng dkjfngl kfdnglkfd","Test2dsg kjnfdangjfdn vfdnknfvk fdnlkjn vfdjnvjfd"],
 			outputHammering);
 		hammeringCard.createCard();
 	}
@@ -384,4 +383,5 @@ $(document).ready(function(){
 	$("#exercise-page").click(exerciseLink);
 	$("#about-page").click(aboutLink);
 	exerciseLink();
+	console.log(eval("console.log('hello')"));
 });
